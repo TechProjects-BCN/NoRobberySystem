@@ -1,12 +1,15 @@
 
 //*****************Servo motor + Ultrasonic***********************//
 
-#include <Servo.h> //Llibreria servo
+#include <Servo.h> // Llibreria servo
+#include <ezButton.h> // Llibreria Boto
+
 
 //Pins
 const int trigPin = 9;
 const int echoPin = 10;
-const int buttonPin = 4;    
+ezButton toggleSwitch(3);  // crear ezButton com objecte al pin 7;
+
 
 //No entenc
 Servo servo1;
@@ -15,8 +18,7 @@ Servo servo1;
 long duration;
 int distance;
 int angle_inicial = 10;
-int angle_final = 180;
-int buttonState = 0;    
+int angle_final = 120;
 
 
 void setup() {  // S'executa només quan sinicia el programa
@@ -27,19 +29,30 @@ void setup() {  // S'executa només quan sinicia el programa
   servo1.attach(8);  // Servo al Pin 8
   servo1.write(angle_inicial);  // Servo al angle de tancar la comporta
 
-  pinMode(buttonPin, INPUT); // Boto en Input (Pin 4)
+  Serial.begin(9600);
+
+  toggleSwitch.setDebounceTime(50); // set debounce time to 50 milosegundos
 
   Serial.begin(9600); // Iniciar Serial (Consola)
 
 }
 void loop() {  // S'executa sempre en bucle (Loop principal)
 
-  buttonState = digitalRead(buttonPin); // Llegeix si el boto esta en off o on (High or Low)
+  //Serial.println("1");
 
-  if (buttonState == HIGH) { // Si el boto està en High (On) entra al if (S'activa el sistema)
+  toggleSwitch.loop(); // MUST call the loop() function first
 
+  if (toggleSwitch.isPressed()){
+    Serial.println("The switch: OFF -> ON");
+  }
+  if (toggleSwitch.isReleased()){
+    Serial.println("The switch: ON -> OFF");
+  }
+  int state = toggleSwitch.getState();
+  if (state == HIGH){
+    
 
-  // Pin 9 a Low
+    // Pin 9 a Low
     digitalWrite(trigPin, LOW);
     delayMicroseconds(2);
     // Pin 9 a High durant 10 ms
@@ -62,6 +75,7 @@ void loop() {  // S'executa sempre en bucle (Loop principal)
       servo1.write(angle_inicial); // Tanca la comporta
       delay(1000); // Temps abans de tornar a començar el codi (temps en ms)
     }
-    delay(50)
+      
   }
+    delay(50);
 } 
