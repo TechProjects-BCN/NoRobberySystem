@@ -1,5 +1,5 @@
 
-//*****************Servo motor + Ultrasonic***********************//
+//*****************Servo motor + Ultrasonic + Switch***********************//
 
 #include <Servo.h> // Llibreria servo
 
